@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is a Stock Exchange? | An Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Finance -->
+    <!-- Application Structure Plan: The application is designed as a narrative journey for a complete beginner. It starts with a high-level analogy ("The Big Picture"), then explains the "How" (the trading process), the "Who/Where" (major exchanges), and the "Rules" (the SEC). This thematic, top-down structure is more intuitive than a traditional report format. User flow is guided by a sticky navigation bar, encouraging exploration in a logical sequence. Interactions like clickable cards, a dynamic chart, and tabs are used to break down complex information into digestible, user-triggered chunks, promoting active learning over passive reading. This structure was chosen to build foundational knowledge step-by-step, ensuring the user is not overwhelmed and can grasp each concept before moving to the next. -->
+    <!-- Visualization & Content Choices: 
+        1. Intro Concepts -> Goal: Inform -> Presentation: Clickable Cards -> Interaction: Click to reveal text -> Justification: Separates the two main purposes (for companies vs. for investors) for clarity. Simple interaction for a simple, foundational idea. (Method: HTML/JS)
+        2. Trading Process -> Goal: Organize/Explain a Process -> Presentation: Interactive Flowchart -> Interaction: Hover to see role descriptions -> Justification: Visually simplifies a multi-step process. Hover reveals details on-demand, keeping the main diagram clean. (Method: HTML/CSS/JS)
+        3. Exchange Comparison (NYSE vs. Nasdaq) -> Goal: Compare -> Presentation: Donut Chart + Dynamic Text -> Interaction: Buttons update chart and text -> Justification: Provides both an immediate visual comparison (sector focus) and detailed textual info. Active user choice makes the comparison more engaging and memorable. (Method: Chart.js/JS)
+        4. SEC's Role -> Goal: Organize/Inform -> Presentation: Tabbed Interface -> Interaction: Click tabs to switch content -> Justification: Chunks a broad topic (regulation) into three distinct, manageable functions. Keeps UI tidy and focused. (Method: HTML/JS) -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333333;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .nav-link.active {
+            color: #4A90E2;
+            border-bottom-color: #4A90E2;
+        }
+        .nav-link:not(.active) {
+            border-bottom-color: transparent;
+        }
+        .interactive-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .tab.active {
+            border-color: #4A90E2;
+            background-color: #4A90E2;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-[#4A90E2]">Stock Exchange 101</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#intro" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#4A90E2] border-b-2">The Basics</a>
+                        <a href="#how-it-works" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#4A90E2] border-b-2">How It Works</a>
+                        <a href="#exchanges" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#4A90E2] border-b-2">US Exchanges</a>
+                        <a href="#sec" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#4A90E2] border-b-2">The Rules</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="intro" class="text-center mb-16 md:mb-24 pt-16">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">What is a Stock Exchange?</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-10">Imagine a massive, organized marketplace. Instead of selling fruits or antiques, this market is for buying and selling tiny pieces of ownership in huge companies like Apple, Disney, or Nike. That's a stock exchange. This section explains its two main purposes. Click on each card to learn more.</p>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div id="card-company" class="interactive-card bg-white p-6 rounded-lg shadow-md cursor-pointer text-left">
+                    <h3 class="text-xl font-bold mb-2 text-[#4A90E2]">For Companies: Raising Money</h3>
+                    <p class="text-gray-600">Why would a company sell pieces of itself? To get money, known as capital, to grow their business.</p>
+                    <div id="content-company" class="hidden mt-4 text-gray-700">
+                        <p>By selling shares on a stock exchange, a company can raise large amounts of cash from the public. They can use this money to build new factories, hire more employees, develop new products, or expand into new countries—all without having to take out a loan from a bank.</p>
+                    </div>
+                </div>
+                <div id="card-investor" class="interactive-card bg-white p-6 rounded-lg shadow-md cursor-pointer text-left">
+                    <h3 class="text-xl font-bold mb-2 text-[#7ED321]">For Investors: Growing Wealth</h3>
+                    <p class="text-gray-600">Why would you buy a tiny piece of a company? To share in its success and hopefully make a profit.</p>
+                    <div id="content-investor" class="hidden mt-4 text-gray-700">
+                        <p>When you buy a company's stock, you become a shareholder. If the company does well and its value increases, the price of your stock may go up. You can then sell it for more than you paid. It's a way for ordinary people to invest their money and potentially grow their wealth over the long term by participating in the economy's growth.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="mb-16 md:mb-24 pt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center tracking-tight mb-4">How a Trade Actually Works</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 text-center mb-12">You don't just walk up to the stock exchange. The process involves a few key players, all connected electronically. It's a highly regulated system designed to be fast, efficient, and fair. Hover over each step below to see the role each player has in the process.</p>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-8">
+                <div class="step group relative flex flex-col items-center text-center">
+                    <div class="w-24 h-24 bg-white border-4 border-[#4A90E2] rounded-full flex items-center justify-center text-3xl font-bold text-[#4A90E2]">1</div>
+                    <h4 class="font-bold mt-2">You, the Investor</h4>
+                    <p class="text-sm text-gray-500">Decide to buy or sell.</p>
+                    <div class="tooltip absolute bottom-full mb-2 w-60 bg-gray-800 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        This is anyone—from a student with $50 to a large pension fund—who wants to invest in the stock market.
+                    </div>
+                </div>
+                <div class="text-2xl text-gray-400 transform md:rotate-0 rotate-90">&rarr;</div>
+                <div class="step group relative flex flex-col items-center text-center">
+                    <div class="w-24 h-24 bg-white border-4 border-gray-400 rounded-full flex items-center justify-center text-3xl font-bold text-gray-400">2</div>
+                    <h4 class="font-bold mt-2">Your Broker</h4>
+                    <p class="text-sm text-gray-500">Places your order.</p>
+                    <div class="tooltip absolute bottom-full mb-2 w-60 bg-gray-800 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        A brokerage firm (like Fidelity, Charles Schwab, or Robinhood) is a licensed company that acts as your agent to execute trades on the exchange.
+                    </div>
+                </div>
+                <div class="text-2xl text-gray-400 transform md:rotate-0 rotate-90">&rarr;</div>
+                <div class="step group relative flex flex-col items-center text-center">
+                    <div class="w-24 h-24 bg-white border-4 border-gray-400 rounded-full flex items-center justify-center text-3xl font-bold text-gray-400">3</div>
+                    <h4 class="font-bold mt-2">The Stock Exchange</h4>
+                    <p class="text-sm text-gray-500">Matches buyers and sellers.</p>
+                     <div class="tooltip absolute bottom-full mb-2 w-60 bg-gray-800 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        The exchange's powerful computers find a seller who wants to sell at the price you want to buy (or vice-versa) and facilitates the transaction in a fraction of a second.
+                    </div>
+                </div>
+                <div class="text-2xl text-gray-400 transform md:rotate-0 rotate-90">&rarr;</div>
+                <div class="step group relative flex flex-col items-center text-center">
+                    <div class="w-24 h-24 bg-white border-4 border-[#7ED321] rounded-full flex items-center justify-center text-3xl font-bold text-[#7ED321]">4</div>
+                    <h4 class="font-bold mt-2">Trade Executed</h4>
+                    <p class="text-sm text-gray-500">Ownership transfers.</p>
+                    <div class="tooltip absolute bottom-full mb-2 w-60 bg-gray-800 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        The transaction is complete. The shares are now in your account, and the money is in the seller's account. It's all recorded electronically.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="exchanges" class="mb-16 md:mb-24 pt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center tracking-tight mb-4">The Major Leagues: NYSE vs. Nasdaq</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 text-center mb-10">In the USA, two exchanges dominate: the New York Stock Exchange (NYSE) and the Nasdaq. While they both do the same basic job, they have different histories, styles, and list different types of companies. Click the buttons below to compare their typical company makeup.</p>
+            <div class="flex justify-center space-x-4 mb-8">
+                <button id="nyseBtn" class="px-6 py-2 bg-[#4A90E2] text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">NYSE</button>
+                <button id="nasdaqBtn" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">Nasdaq</button>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="chart-container">
+                    <canvas id="exchangeChart"></canvas>
+                </div>
+                <div id="exchangeInfo" class="text-left bg-white p-6 rounded-lg shadow-inner">
+                    <h3 id="exchangeTitle" class="text-2xl font-bold mb-3"></h3>
+                    <p id="exchangeDescription" class="text-gray-700 mb-4"></p>
+                    <h4 class="font-semibold mb-2">Famous Companies Listed:</h4>
+                    <ul id="exchangeCompanies" class="list-disc list-inside text-gray-600"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec" class="pt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center tracking-tight mb-4">The Referee: The SEC</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 text-center mb-10">The stock market isn't a free-for-all. A powerful government agency, the U.S. Securities and Exchange Commission (SEC), acts as the market's police officer. Its main job is to protect investors and maintain fair, orderly, and efficient markets. The SEC accomplishes this through three key functions, which you can explore in the tabs below.</p>
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-4 flex space-x-1 p-1 bg-gray-200 rounded-lg">
+                    <button data-tab="tab1" class="tab w-full text-center py-2 px-4 rounded-md font-medium text-sm focus:outline-none active">Protect Investors</button>
+                    <button data-tab="tab2" class="tab w-full text-center py-2 px-4 rounded-md font-medium text-sm focus:outline-none">Ensure Fair Markets</button>
+                    <button data-tab="tab3" class="tab w-full text-center py-2 px-4 rounded-md font-medium text-sm focus:outline-none">Require Honesty</button>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-inner">
+                    <div id="tab1" class="tab-content">
+                        <h3 class="text-xl font-bold mb-2">Fighting Fraud and Scams</h3>
+                        <p class="text-gray-700">The SEC's primary role is to be your watchdog. It investigates tips and complaints about potential scams, such as companies lying about their products or financial health to trick people into buying their stock. If the SEC finds evidence of fraud, it can bring civil lawsuits against individuals and companies, resulting in hefty fines and other penalties to deter bad behavior.</p>
+                    </div>
+                    <div id="tab2" class="tab-content hidden">
+                        <h3 class="text-xl font-bold mb-2">Preventing Unfair Advantages</h3>
+                        <p class="text-gray-700">The SEC creates and enforces rules to ensure that no one has an unfair advantage. The most famous example is the prohibition of "insider trading." This rule prevents company executives, who have secret knowledge about an upcoming product or financial result, from using that information to buy or sell stock before the public knows about it. This helps level the playing field for all investors.</p>
+                    </div>
+                    <div id="tab3" class="tab-content hidden">
+                        <h3 class="text-xl font-bold mb-2">Forcing Companies to Be Transparent</h3>
+                        <p class="text-gray-700">To make informed decisions, investors need reliable information. The SEC mandates that all publicly traded companies must regularly disclose meaningful financial and other information to the public. This includes quarterly and annual reports detailing their sales, profits, debts, and potential risks. This transparency allows you to research a company and judge its health for yourself before investing.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-16 md:mt-24 border-t">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Stock Exchange 101. An interactive guide for educational purposes.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Interactive cards in intro section
+            const cardCompany = document.getElementById('card-company');
+            const contentCompany = document.getElementById('content-company');
+            const cardInvestor = document.getElementById('card-investor');
+            const contentInvestor = document.getElementById('content-investor');
+
+            cardCompany.addEventListener('click', () => {
+                contentCompany.classList.toggle('hidden');
+                cardCompany.classList.toggle('ring-2');
+                cardCompany.classList.toggle('ring-[#4A90E2]');
+            });
+
+            cardInvestor.addEventListener('click', () => {
+                contentInvestor.classList.toggle('hidden');
+                cardInvestor.classList.toggle('ring-2');
+                cardInvestor.classList.toggle('ring-[#7ED321]');
+            });
+
+            // Exchange Comparison Chart
+            const ctx = document.getElementById('exchangeChart').getContext('2d');
+            const exchangeTitle = document.getElementById('exchangeTitle');
+            const exchangeDescription = document.getElementById('exchangeDescription');
+            const exchangeCompanies = document.getElementById('exchangeCompanies');
+            const nyseBtn = document.getElementById('nyseBtn');
+            const nasdaqBtn = document.getElementById('nasdaqBtn');
+
+            const nyseData = {
+                labels: ['Financials', 'Industrials', 'Healthcare', 'Consumer Goods', 'Other'],
+                data: [25, 20, 18, 15, 22],
+                title: 'New York Stock Exchange (NYSE)',
+                description: 'The NYSE is the oldest and largest stock exchange in the world. Often called the "Big Board," it has a physical trading floor on Wall Street, though most trading is now electronic. It\'s known for listing large, established "blue-chip" companies from various industries.',
+                companies: ['The Coca-Cola Company', 'Walt Disney Co.', 'Johnson & Johnson', 'Walmart']
+            };
+
+            const nasdaqData = {
+                labels: ['Technology', 'Consumer Services', 'Healthcare', 'Financials', 'Other'],
+                data: [50, 18, 15, 10, 7],
+                title: 'Nasdaq Stock Market',
+                description: 'The Nasdaq was the world\'s first electronic stock market. It has no physical trading floor. It is famous for being home to many of the world\'s largest technology and growth companies, from giants to innovative startups.',
+                companies: ['Apple Inc.', 'Microsoft Corp.', 'Amazon.com, Inc.', 'Alphabet Inc. (Google)']
+            };
+
+            const exchangeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sector Breakdown',
+                        data: [],
+                        backgroundColor: [
+                            '#4A90E2',
+                            '#7ED321',
+                            '#F5A623',
+                            '#BD10E0',
+                            '#D1D5DB'
+                        ],
+                        borderColor: '#F8F7F4',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateChart(data) {
+                exchangeChart.data.labels = data.labels;
+                exchangeChart.data.datasets[0].data = data.data;
+                exchangeChart.update();
+
+                exchangeTitle.textContent = data.title;
+                exchangeDescription.textContent = data.description;
+                exchangeCompanies.innerHTML = data.companies.map(c => `<li>${c}</li>`).join('');
+            }
+            
+            nyseBtn.addEventListener('click', () => {
+                updateChart(nyseData);
+                nyseBtn.classList.add('bg-[#4A90E2]', 'text-white');
+                nyseBtn.classList.remove('bg-gray-200', 'text-gray-800');
+                nasdaqBtn.classList.add('bg-gray-200', 'text-gray-800');
+                nasdaqBtn.classList.remove('bg-[#4A90E2]', 'text-white');
+            });
+
+            nasdaqBtn.addEventListener('click', () => {
+                updateChart(nasdaqData);
+                nasdaqBtn.classList.add('bg-[#4A90E2]', 'text-white');
+                nasdaqBtn.classList.remove('bg-gray-200', 'text-gray-800');
+                nyseBtn.classList.add('bg-gray-200', 'text-gray-800');
+                nyseBtn.classList.remove('bg-[#4A90E2]', 'text-white');
+            });
+
+            // SEC Tabs
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = document.getElementById(tab.dataset.tab);
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    tabContents.forEach(c => c.classList.add('hidden'));
+                    target.classList.remove('hidden');
+                });
+            });
+
+            // Smooth scrolling and active nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            // Initialize view
+            updateChart(nyseData);
+            nyseBtn.click();
+        });
+    </script>
+</body>
+</html>
